@@ -1,0 +1,43 @@
+h1 {
+  font-family:
+    Instrument Sans,
+    sans-serif;
+  font-size: 3rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #1f2024;
+}
+
+h2 {
+  font-family:
+    Instrument Sans,
+    sans-serif;
+  font-size: 2.5rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #1f2024;
+}
+
+h3 {
+  font-family:
+    Instrument Sans,
+    sans-serif;
+  font-size: 2rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #1f2024;
+}
+
+p {
+  font-family:
+    Instrument Sans,
+    sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #1f2024;
+}
+
+.small {
+  font-size: 0.8;
+}

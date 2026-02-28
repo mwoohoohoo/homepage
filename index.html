@@ -105,7 +105,7 @@
         mouse.active = false;
       });
 
-      const BOID_COUNT = 600;
+      const BOID_COUNT = window.innerWidth < 768 ? 350 : 600;
       const boids = [];
 
       class Boid {
@@ -115,8 +115,11 @@
           const rect = canvas.getBoundingClientRect();
 
           // ✅ Spawn relative to visible canvas size
-          this.x = rect.width / 2 + (Math.random() - 0.5) * 200;
-          this.y = rect.height / 2 + (Math.random() - 0.5) * 200;
+          // ✅ Responsive spawn radius (prevents mobile clipping)
+          const maxSpawnRadius = Math.min(rect.width, rect.height) * 0.25;
+
+          this.x = rect.width / 2 + (Math.random() - 0.5) * maxSpawnRadius;
+          this.y = rect.height / 2 + (Math.random() - 0.5) * maxSpawnRadius;
 
           this.vx = (Math.random() - 0.5) * 0.6;
           this.vy = (Math.random() - 0.5) * 0.6;

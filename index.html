@@ -71,10 +71,20 @@
       const canvas = document.getElementById("flock");
       const ctx = canvas.getContext("2d");
 
+      // ✅ Retina / DPR scaling (sharp rendering)
       function resize() {
-        canvas.width = canvas.parentElement.offsetWidth;
-        canvas.height = canvas.parentElement.offsetHeight;
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.parentElement.getBoundingClientRect();
+
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+
+        canvas.style.width = rect.width + "px";
+        canvas.style.height = rect.height + "px";
+
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       }
+
       window.addEventListener("resize", resize);
       resize();
 
@@ -100,15 +110,18 @@
 
       class Boid {
         constructor(depth) {
-          this.depth = depth; // 0 = back, 1 = mid, 2 = front
+          this.depth = depth;
 
-          this.x = canvas.width / 2 + (Math.random() - 0.5) * 200;
-          this.y = canvas.height / 2 + (Math.random() - 0.5) * 200;
+          const rect = canvas.getBoundingClientRect();
+
+          // ✅ Spawn relative to visible canvas size (not DPR size)
+          this.x = rect.width / 2 + (Math.random() - 0.5) * 200;
+          this.y = rect.height / 2 + (Math.random() - 0.5) * 200;
 
           this.vx = (Math.random() - 0.5) * 0.6;
           this.vy = (Math.random() - 0.5) * 0.6;
 
-          this.size = depth === 2 ? 2.4 : depth === 1 ? 2 : 1.6;
+          this.size = depth === 2 ? 2.4 : depth === 1 ? 1.8 : 1.2;
           this.opacity = depth === 2 ? 1 : depth === 1 ? 0.8 : 0.6;
         }
 
@@ -156,7 +169,6 @@
             this.vy += alignY * 0.03 + cohesionY + separationY;
           }
 
-          // Cursor attraction (soft gravitational pull)
           if (mouse.active) {
             const dx = mouse.x - this.x;
             const dy = mouse.y - this.y;
@@ -181,26 +193,30 @@
             this.vy = (this.vy / speed) * baseMaxSpeed;
           }
 
-          // Contain within canvas softly
           const margin = 60;
           if (this.x < margin) this.vx += 0.05;
-          if (this.x > canvas.width - margin) this.vx -= 0.05;
+          if (this.x > canvas.width / (window.devicePixelRatio || 1) - margin)
+            this.vx -= 0.05;
           if (this.y < margin) this.vy += 0.05;
-          if (this.y > canvas.height - margin) this.vy -= 0.05;
+          if (this.y > canvas.height / (window.devicePixelRatio || 1) - margin)
+            this.vy -= 0.05;
         }
 
         draw() {
+          // ✅ Pixel snapping for crisp rendering
+          const x = Math.round(this.x);
+          const y = Math.round(this.y);
+
           ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.arc(x, y, this.size, 0, Math.PI * 2);
           ctx.fillStyle = primaryColor;
           ctx.globalAlpha = this.opacity;
           ctx.fill();
         }
       }
 
-      // Create depth layers
       for (let i = 0; i < BOID_COUNT; i++) {
-        const depth = i % 3; // 3 parallax layers
+        const depth = i % 3;
         boids.push(new Boid(depth));
       }
 

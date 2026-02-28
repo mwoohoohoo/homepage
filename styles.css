@@ -160,18 +160,30 @@ footer {
 /* ================= Responsive ================= */
 
 @media (max-width: 768px) {
+  .hero {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* pushes content to bottom */
+    min-height: 100vh;
+  }
+
+  .flock-container {
+    position: relative;
+    width: 100%;
+    flex: 1; /* takes remaining available space */
+    height: auto;
+    top: auto;
+    right: auto;
+  }
+
   .hero-content {
-    bottom: 80px;
+    position: relative;
+    bottom: auto;
+    left: auto;
+    padding: 2rem var(--layout-padding);
   }
 
   h1 {
     font-size: 2rem;
-  }
-
-  flock-container {
-    width: 100%;
-    height: 50%;
-    top: 0;
-    right: 0;
   }
 }

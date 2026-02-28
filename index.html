@@ -105,7 +105,7 @@
         mouse.active = false;
       });
 
-      const BOID_COUNT = 260;
+      const BOID_COUNT = 600;
       const boids = [];
 
       class Boid {
@@ -114,14 +114,14 @@
 
           const rect = canvas.getBoundingClientRect();
 
-          // ✅ Spawn relative to visible canvas size (not DPR size)
+          // ✅ Spawn relative to visible canvas size
           this.x = rect.width / 2 + (Math.random() - 0.5) * 200;
           this.y = rect.height / 2 + (Math.random() - 0.5) * 200;
 
           this.vx = (Math.random() - 0.5) * 0.6;
           this.vy = (Math.random() - 0.5) * 0.6;
 
-          this.size = depth === 2 ? 2.4 : depth === 1 ? 1.8 : 1.2;
+          this.size = depth === 2 ? 2.0 : depth === 1 ? 1.8 : 1.2;
           this.opacity = depth === 2 ? 1 : depth === 1 ? 0.8 : 0.6;
         }
 
@@ -165,8 +165,8 @@
             separationX *= 0.015;
             separationY *= 0.015;
 
-            this.vx += alignX * 0.03 + cohesionX + separationX;
-            this.vy += alignY * 0.03 + cohesionY + separationY;
+            this.vx += alignX * 0.02 + cohesionX * 0.8 + separationX;
+            this.vy += alignY * 0.02 + cohesionY * 0.8 + separationY;
           }
 
           if (mouse.active) {
@@ -175,8 +175,8 @@
             const dist = Math.sqrt(dx * dx + dy * dy);
 
             if (dist < 250) {
-              this.vx += dx * 0.0015;
-              this.vy += dy * 0.0015;
+              this.vx += dx * 0.001;
+              this.vy += dy * 0.001;
             }
           }
         }
@@ -185,12 +185,34 @@
           this.x += this.vx;
           this.y += this.vy;
 
-          const baseMaxSpeed = mouse.active ? 2.2 : 1.2;
+          // ✅ Gentle velocity damping
+          this.vx *= 0.98;
+          this.vy *= 0.98;
+
+          const baseMaxSpeed = mouse.active ? 1.6 : 0.75;
           const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
 
           if (speed > baseMaxSpeed) {
             this.vx = (this.vx / speed) * baseMaxSpeed;
             this.vy = (this.vy / speed) * baseMaxSpeed;
+          }
+
+          // ✅ Smarter global containment (prevents pulsing)
+          const rect = canvas.getBoundingClientRect();
+          const centerX = rect.width / 2;
+          const centerY = rect.height / 2;
+
+          const dxCenter = centerX - this.x;
+          const dyCenter = centerY - this.y;
+          const distFromCenter = Math.sqrt(
+            dxCenter * dxCenter + dyCenter * dyCenter,
+          );
+
+          const maxRadius = 250;
+
+          if (distFromCenter > maxRadius) {
+            this.vx += dxCenter * 0.0006;
+            this.vy += dyCenter * 0.0006;
           }
 
           const margin = 60;
@@ -203,7 +225,6 @@
         }
 
         draw() {
-          // ✅ Pixel snapping for crisp rendering
           const x = Math.round(this.x);
           const y = Math.round(this.y);
 

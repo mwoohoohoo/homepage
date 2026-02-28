@@ -1,30 +1,64 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Link to external CSS file -->
-    <link rel="stylesheet" href="styles.css" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>studio glu</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap"
+    />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css" />
   </head>
+
   <body>
+    <header class="navbar">
+      <div class="nav-container">
+        <a href="/" class="logo">
+          <img src="assets/Logo-dark.svg" alt="studio glu logo" />
+        </a>
+
+        <nav>
+          <ul class="nav-links">
+            <li><a href="/work.html">Work</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li>
+              <a
+                class="btn btn-primary"
+                href="mailto:hey@studioglu.nl?subject=Hello%20there"
+              >
+                Get in touch
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
     <main>
-      <section>
-        <img
-          src="assets/Headshot.jpeg"
-          alt="Merri Hookway"
-          width="240"
-          height="auto"
-        />
-        <h1>
-          Bringing data and design together to make visuals that tell a story.
-        </h1>
-        <h3>For humans, by humans.</h3>
+      <section class="hero">
+        <div class="hero-content">
+          <h1>
+            Bringing data and design together to make visuals that tell a story.
+          </h1>
+
+          <p class="tagline">For humans, by humans.</p>
+
+          <a href="/work.html" class="btn btn-secondary"> See what we do </a>
+        </div>
       </section>
     </main>
+
     <footer>
       <p class="small">
-        (つ▀¯▀ )つ <br />hey@studioglu.nl <br />© studio glu 2026
+        (つ▀¯▀ )つ <br />
+        hey@studioglu.nl <br />
+        © studio glu 2026
       </p>
     </footer>
   </body>

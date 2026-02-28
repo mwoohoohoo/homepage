@@ -42,6 +42,11 @@
 
     <main>
       <section class="hero">
+        <!-- Flocking canvas container -->
+        <div class="flock-container">
+          <canvas id="flock"></canvas>
+        </div>
+
         <div class="hero-content">
           <h1>
             Bringing data and design together to make visuals that tell a story.
@@ -61,5 +66,157 @@
         © studio glu 2026
       </p>
     </footer>
+
+    <script>
+      const canvas = document.getElementById("flock");
+      const ctx = canvas.getContext("2d");
+
+      function resize() {
+        canvas.width = canvas.parentElement.offsetWidth;
+        canvas.height = canvas.parentElement.offsetHeight;
+      }
+      window.addEventListener("resize", resize);
+      resize();
+
+      const primaryColor = getComputedStyle(document.documentElement)
+        .getPropertyValue("--color-primary")
+        .trim();
+
+      const mouse = { x: null, y: null, active: false };
+
+      canvas.addEventListener("mousemove", (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+        mouse.active = true;
+      });
+
+      canvas.addEventListener("mouseleave", () => {
+        mouse.active = false;
+      });
+
+      const BOID_COUNT = 260;
+      const boids = [];
+
+      class Boid {
+        constructor(depth) {
+          this.depth = depth; // 0 = back, 1 = mid, 2 = front
+
+          this.x = canvas.width / 2 + (Math.random() - 0.5) * 200;
+          this.y = canvas.height / 2 + (Math.random() - 0.5) * 200;
+
+          this.vx = (Math.random() - 0.5) * 0.6;
+          this.vy = (Math.random() - 0.5) * 0.6;
+
+          this.size = depth === 2 ? 2.4 : depth === 1 ? 2 : 1.6;
+          this.opacity = depth === 2 ? 1 : depth === 1 ? 0.8 : 0.6;
+        }
+
+        flock(boids) {
+          let alignX = 0,
+            alignY = 0,
+            cohesionX = 0,
+            cohesionY = 0,
+            separationX = 0,
+            separationY = 0;
+
+          let total = 0;
+          const perception = 80;
+
+          for (let other of boids) {
+            const dx = other.x - this.x;
+            const dy = other.y - this.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (other !== this && dist < perception) {
+              alignX += other.vx;
+              alignY += other.vy;
+
+              cohesionX += other.x;
+              cohesionY += other.y;
+
+              separationX -= dx / dist;
+              separationY -= dy / dist;
+
+              total++;
+            }
+          }
+
+          if (total > 0) {
+            alignX /= total;
+            alignY /= total;
+
+            cohesionX = (cohesionX / total - this.x) * 0.01;
+            cohesionY = (cohesionY / total - this.y) * 0.01;
+
+            separationX *= 0.015;
+            separationY *= 0.015;
+
+            this.vx += alignX * 0.03 + cohesionX + separationX;
+            this.vy += alignY * 0.03 + cohesionY + separationY;
+          }
+
+          // Cursor attraction (soft gravitational pull)
+          if (mouse.active) {
+            const dx = mouse.x - this.x;
+            const dy = mouse.y - this.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < 250) {
+              this.vx += dx * 0.0015;
+              this.vy += dy * 0.0015;
+            }
+          }
+        }
+
+        update() {
+          this.x += this.vx;
+          this.y += this.vy;
+
+          const baseMaxSpeed = mouse.active ? 2.2 : 1.2;
+          const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+
+          if (speed > baseMaxSpeed) {
+            this.vx = (this.vx / speed) * baseMaxSpeed;
+            this.vy = (this.vy / speed) * baseMaxSpeed;
+          }
+
+          // Contain within canvas softly
+          const margin = 60;
+          if (this.x < margin) this.vx += 0.05;
+          if (this.x > canvas.width - margin) this.vx -= 0.05;
+          if (this.y < margin) this.vy += 0.05;
+          if (this.y > canvas.height - margin) this.vy -= 0.05;
+        }
+
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fillStyle = primaryColor;
+          ctx.globalAlpha = this.opacity;
+          ctx.fill();
+        }
+      }
+
+      // Create depth layers
+      for (let i = 0; i < BOID_COUNT; i++) {
+        const depth = i % 3; // 3 parallax layers
+        boids.push(new Boid(depth));
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        boids.forEach((boid) => {
+          boid.flock(boids);
+          boid.update();
+          boid.draw();
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    </script>
   </body>
 </html>

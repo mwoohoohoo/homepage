@@ -29,7 +29,7 @@ body {
 .navbar {
   position: fixed;
   width: 100%;
-  z-index: 10;
+  z-index: 2000; /* 👈 higher than overlay */
   background: rgba(255, 248, 240, 0.85);
   backdrop-filter: blur(6px);
 }
@@ -158,6 +158,42 @@ footer {
   text-align: center;
 }
 
+/* ================= Mobile Nav ================= */
+
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  z-index: 2100;
+}
+
+.hamburger .icon {
+  width: 28px;
+  height: 28px;
+  display: none;
+}
+
+.hamburger .icon-hamburger {
+  display: block;
+}
+
+.hamburger.active .icon-hamburger {
+  display: none;
+}
+
+.hamburger.active .icon-close {
+  display: block;
+}
+
+/* Lock scroll when mobile menu is open */
+body.menu-open {
+  overflow: hidden;
+}
+
 /* ================= Responsive ================= */
 
 @media (max-width: 768px) {
@@ -186,5 +222,79 @@ footer {
 
   h1 {
     font-size: 2rem;
+  }
+
+  /* Mobile nav menu */
+
+  nav {
+    position: relative;
+    z-index: 1000;
+  }
+
+  .nav-links {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100dvh;
+    background: var(--color-dark);
+
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2.5rem;
+
+    transform: translateY(-100%);
+    transition: transform 0.4s ease;
+  }
+
+  /* Show hamburger */
+  .hamburger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1100;
+  }
+
+  /* Overlay base state */
+  .nav-links {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100dvh;
+    background: var(--color-dark);
+
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2.5rem;
+
+    transform: translateY(-100%);
+    transition: transform 0.4s ease;
+
+    z-index: 900; /* below navbar */
+  }
+
+  /* Slide in */
+  .nav-links.open {
+    transform: translateY(0);
+  }
+
+  /* Overlay text styles */
+  .nav-links a:not(.btn) {
+    color: var(--color-cream);
+    font-size: 1.6rem;
+  }
+
+  .nav-links .btn-primary {
+    background: var(--color-cream);
+    color: var(--color-dark);
+  }
+
+  .nav-links .btn-primary:hover {
+    background: var(--color-primary);
+    color: var(--color-cream);
   }
 }

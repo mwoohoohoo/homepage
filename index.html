@@ -27,6 +27,15 @@
         </a>
 
         <nav>
+          <button class="hamburger" aria-label="Toggle menu">
+            <img
+              src="assets/Hamburger.svg"
+              alt=""
+              class="icon icon-hamburger"
+            />
+            <img src="assets/Close.svg" alt="" class="icon icon-close" />
+          </button>
+
           <ul class="nav-links">
             <li><a href="/work.html">Work</a></li>
             <li><a href="/about.html">About</a></li>
@@ -258,6 +267,17 @@
       }
 
       animate();
+
+      // Hamburger menu behaviour
+
+      const hamburger = document.querySelector(".hamburger");
+      const navLinks = document.querySelector(".nav-links");
+
+      hamburger.addEventListener("click", () => {
+        hamburger.classList.toggle("active");
+        navLinks.classList.toggle("open");
+        document.body.classList.toggle("menu-open");
+      });
     </script>
   </body>
 </html>

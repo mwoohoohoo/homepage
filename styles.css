@@ -43,6 +43,7 @@ body {
 
 .logo img {
   height: 30px;
+  display: block;
 }
 
 .nav-links {
@@ -231,23 +232,6 @@ body.menu-open {
     z-index: 1000;
   }
 
-  .nav-links {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100dvh;
-    background: var(--color-dark);
-
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 2.5rem;
-
-    transform: translateY(-100%);
-    transition: transform 0.4s ease;
-  }
-
   /* Show hamburger */
   .hamburger {
     display: flex;
@@ -280,6 +264,7 @@ body.menu-open {
   /* Slide in */
   .nav-links.open {
     transform: translateY(0);
+    gap: 3.5rem;
   }
 
   /* Overlay text styles */
@@ -291,10 +276,7 @@ body.menu-open {
   .nav-links .btn-primary {
     background: var(--color-cream);
     color: var(--color-dark);
-  }
-
-  .nav-links .btn-primary:hover {
-    background: var(--color-primary);
-    color: var(--color-cream);
+    font-size: 1.6rem;
+    padding: 1rem 2rem;
   }
 }
